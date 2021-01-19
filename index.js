@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080; // default port 8080
+const HOSTNAME = process.env.HOSTNAME || "localhost"; // default port 8080
 
 app.set("view engine", "ejs");
 
@@ -28,16 +29,28 @@ app.get("/urls", (req, res) => {
   res.render("partials/shell", templateVars);
 });
 
+app.get("/:shortURL", (req, res) => {
+  const templateVars = {
+    title: req.params.shortURL,
+    urls: urlDatabase,
+    // body: "../urls/body",
+    // head: "../urls/redirect/redirectHead",
+    head: "empty",
+    body: "../urls/redirect/redirectHead",
+    shortURL: req.params.shortURL
+  };
+  res.render("partials/shell", templateVars);
+});
+
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     title: req.params.shortURL,
     urls: urlDatabase,
-    body: "../urls/body",
-    head: "../urls/redirect/redirectHead",
+    body: "../urls/show/body",
+    head: "empty",
     shortURL: req.params.shortURL
   };
   res.render("partials/shell", templateVars);
-  console.log(templateVars);
 });
 
 
