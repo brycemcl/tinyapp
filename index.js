@@ -1,8 +1,8 @@
 const express = require("express");
 const app = express();
-const PORT = (process.env.PORT || 8080); // default port 8080
+const PORT = process.env.PORT || 8080; // default port 8080
 
-app.set("view engine", "ejs")
+app.set("view engine", "ejs");
 
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
@@ -10,17 +10,19 @@ const urlDatabase = {
 };
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  const templateVars = {};
+  res.render("index", templateVars);
 });
 
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
+app.get("/urls", (req, res) => {
+  const templateVars = {
+    title: "test",
+    urls: urlDatabase,
+    body: "../urls/body",
+  };
+  res.render("partials/shell", templateVars);
 });
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`TinyApp listening on port ${PORT}!`);
 });
