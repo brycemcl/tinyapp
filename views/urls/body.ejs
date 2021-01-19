@@ -17,7 +17,7 @@
           <td><a href="<%= url %>"><%= url %></a></td>
           <td><a href="<%= urls[url] %>"><%= urls[url] %></a></td>
           <td>
-            <form action="/<%= `${url}/delete` %>" method="post" style="display: inline">
+            <form action="/urls/<%= `${url}/delete` %>" method="post" style="display: inline">
               <button type="submit" class="btn btn-danger">Delete</button>
             </form>
             <form action="/urls/<%= url %>" method="get" style="display: inline">

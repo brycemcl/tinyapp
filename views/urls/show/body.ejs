@@ -5,7 +5,7 @@
     <p class="card-text">
       Short URL: <a href="/<%= `${shortURL}` %>"><%= shortURL %></a>
       <br>
-      <form action="/<%= `${shortURL}/delete` %>" method="post">
+      <form action="/urls/<%= `${shortURL}/delete` %>" method="post">
         <button type="submit" class="btn btn-primary">Delete</button>
       </form>
     </p>
