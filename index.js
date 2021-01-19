@@ -25,6 +25,11 @@ const urlDatabase = {
     this["_urls"][userName][shortURL] = longURL;
     return shortURL;
   },
+  deleteURL(shortURL, userName = "sample") {
+    const urls = this.urls();
+    delete urls[shortURL];
+    console.log(this.urls());
+  },
 };
 
 app.get("/", (req, res) => {
@@ -63,6 +68,12 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+app.post("/urls/:shortURL/delete", (req, res) => {
+  const { shortURL } = req.params;
+  urlDatabase.deleteURL(shortURL);
+  res.redirect(`/urls/`);
+});
+
 app.get("/:shortURL", (req, res) => {
   const templateVars = {
     title: req.params.shortURL,
@@ -82,9 +93,6 @@ app.get("/urls/:shortURL", (req, res) => {
     head: "_empty",
     shortURL: req.params.shortURL,
   };
-  console.log(templateVars);
-  console.log(req.path);
-  console.log(urlDatabase.urls());
   res.render("partials/_shell", templateVars);
 });
 
