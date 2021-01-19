@@ -4,17 +4,26 @@
   <table class="table table-hover">
     <thead>
       <tr>
-        <th scope="col">URL Status</th>
+
         <th scope="col">Short URL</th>
         <th scope="col">Long URL</th>
+        <th scope="col">Actions</th>
       </tr>
     </thead>
     <tbody>
       <% for(let url in urls) { %>
         <tr>
-          <td><a href="/urls/<%= url %>">Edit</a></td>
+
           <td><a href="<%= url %>"><%= url %></a></td>
           <td><a href="<%= urls[url] %>"><%= urls[url] %></a></td>
+          <td>
+            <form action="/<%= `${url}/delete` %>" method="post" style="display: inline">
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+            <form action="/urls/<%= url %>" method="get" style="display: inline">
+              <button type="submit" class="btn btn-primary">Details</button>
+            </form>
+          </td>
         </tr>
       <% } %>
     </tbody>

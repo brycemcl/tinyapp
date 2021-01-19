@@ -4,6 +4,10 @@
     <h5 class="card-title">TinyURL for: <%= urls[shortURL] %></h5>
     <p class="card-text">
       Short URL: <a href="/<%= `${shortURL}` %>"><%= shortURL %></a>
+      <br>
+      <form action="/<%= `${shortURL}/delete` %>" method="post">
+        <button type="submit" class="btn btn-primary">Delete</button>
+      </form>
     </p>
   </div>
   <div class="card-footer text-muted"></div>
