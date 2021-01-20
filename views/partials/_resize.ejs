@@ -1,0 +1,14 @@
+<<%=type%>>
+  <span id="widthMeasure-<%=idToResize%>" style="visibility: hidden"></span>
+</<%=type%>>
+  
+  <script>
+  window.addEventListener("load",()=>{
+    document.getElementById("widthMeasure-<%=idToResize%>").innerHTML=document.getElementById("<%=idToResize%>").value
+    document.getElementById("<%=idToResize%>").style.width = `${document.getElementById("widthMeasure-<%=idToResize%>").offsetWidth+10}px`
+  })
+  document.getElementById("<%=idToResize%>").addEventListener("input",()=>{
+    document.getElementById("widthMeasure-<%=idToResize%>").innerHTML=document.getElementById("<%=idToResize%>").value
+    document.getElementById("<%=idToResize%>").style.width =`${document.getElementById("widthMeasure-<%=idToResize%>").offsetWidth+10}px`
+  })
+  </script>

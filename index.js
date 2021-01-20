@@ -25,10 +25,26 @@ const urlDatabase = {
     this["_urls"][userName][shortURL] = longURL;
     return shortURL;
   },
+  renameShortURL(fromShortURL, toShortURL, userName = "sample") {
+    if (this.shortURLValid(toShortURL)) {
+      this["_urls"][userName][toShortURL] = this["_urls"][userName][
+        fromShortURL
+      ];
+      delete this["_urls"][userName][fromShortURL];
+      return toShortURL;
+    } else {
+      return fromShortURL;
+    }
+  },
   deleteURL(shortURL, userName = "sample") {
     const urls = this.urls();
     delete urls[shortURL];
-    console.log(this.urls());
+  },
+  longURLValid() {
+    return true;
+  },
+  shortURLValid() {
+    return true;
   },
 };
 
@@ -74,12 +90,44 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   res.redirect(`/urls/`);
 });
 
+app.post("/urls/:previousShortURL", (req, res) => {
+  const { previousShortURL } = req.params;
+  const { shortURL: formShortURL, longURL: formLongURL } = req.body;
+  const previousLongURL = urlDatabase.urls()[previousShortURL];
+  console.table([
+    [previousShortURL, previousLongURL],
+    [formShortURL, formLongURL],
+  ]);
+  if (
+    urlDatabase.longURLValid(formLongURL) &&
+    urlDatabase.shortURLValid(formShortURL)
+  ) {
+    urlDatabase.deleteURL(previousShortURL);
+    const newShortURL = urlDatabase.newURL(formLongURL);
+    urlDatabase.renameShortURL(newShortURL, formShortURL);
+    res.redirect(`/urls/${formShortURL}`);
+  } else {
+    res.redirect(`/urls/${previousShortURL}`);
+  }
+});
+
 app.get("/:shortURL", (req, res) => {
   const templateVars = {
     title: req.params.shortURL,
     urls: urlDatabase.urls(),
     head: "_empty",
     body: "../urls/redirect/redirectHead",
+    shortURL: req.params.shortURL,
+  };
+  res.render("partials/_shell", templateVars);
+});
+
+app.get("/urls/:shortURL/edit", (req, res) => {
+  const templateVars = {
+    title: req.params.shortURL,
+    urls: urlDatabase.urls(),
+    body: "../urls/show/edit/body",
+    head: "_empty",
     shortURL: req.params.shortURL,
   };
   res.render("partials/_shell", templateVars);
