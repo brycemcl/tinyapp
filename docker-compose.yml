@@ -8,5 +8,8 @@ services:
       dockerfile: ./Dockerfile
     environment:
       NODE_ENV: production
+      PORT: 8080
+    env_file:
+    - secret.env
     ports:
       - 8080:8080

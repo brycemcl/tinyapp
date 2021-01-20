@@ -4,7 +4,13 @@ const { uniqueURL } = require("./uniqueURL");
 const PORT = process.env.PORT || 8080; // default port 8080
 const HOSTNAME = process.env.HOSTNAME || "localhost"; // default port 8080
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
+if (process.env.SECRET) {
+  app.use(cookieParser(process.env.SECRET));
+} else {
+  app.use(cookieParser());
+}
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -94,10 +100,6 @@ app.post("/urls/:previousShortURL", (req, res) => {
   const { previousShortURL } = req.params;
   const { shortURL: formShortURL, longURL: formLongURL } = req.body;
   const previousLongURL = urlDatabase.urls()[previousShortURL];
-  console.table([
-    [previousShortURL, previousLongURL],
-    [formShortURL, formLongURL],
-  ]);
   if (
     urlDatabase.longURLValid(formLongURL) &&
     urlDatabase.shortURLValid(formShortURL)
