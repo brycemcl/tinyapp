@@ -2,11 +2,9 @@
   "name": "tinyapp",
   "version": "0.0.1",
   "description": "A url shortener",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "test": "mocha",
-    "watch": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "Bryce McLachlan",

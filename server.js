@@ -23,7 +23,14 @@ if user is logged in:
 if user is not logged in:
 (Minor) redirect to /login
 */
-app.get("/", (req, res) => {});
+app.get("/", (req, res) => {
+  console.log(req.user)
+  if (req.user !== undefined) {
+    res.redirect(`/urls`);
+  } else {
+    res.redirect(`/login`);
+  }
+});
 
 /*
 GET /urls
