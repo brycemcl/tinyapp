@@ -136,6 +136,7 @@ app.get("/urls/:shortURL/edit", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
+  console.log(req.cookies);
   const templateVars = {
     title: req.params.shortURL,
     urls: urlDatabase.urls(),
