@@ -14,17 +14,20 @@ if (process.env.SECRET) {
 } else {
   app.use(cookieParser());
 }
+
 app.set("view engine", "ejs");
 app.use(authentication);
+
 /*
 GET /
+
 if user is logged in:
 (Minor) redirect to /urls
 if user is not logged in:
 (Minor) redirect to /login
 */
 app.get("/", (req, res) => {
-  console.log(req.user)
+  console.log(req.user);
   if (req.user !== undefined) {
     res.redirect(`/urls`);
   } else {
@@ -50,12 +53,26 @@ a delete button which makes a POST request to /urls/:id/delete
 if user is not logged in:
 returns HTML with a relevant error message
 */
-app.get("/urls", (req, res) => {});
+app.get("/urls", (req, res) => {
+  const templateVars = {
+    title: "",
+    body: "_empty",
+    head: "_empty",
+  };
+  res.render("partials/_shell", templateVars);
+});
 
 /*
 
 */
-app.get("/urls/new", (req, res) => {});
+app.get("/urls/new", (req, res) => {
+  const templateVars = {
+    title: "",
+    body: "_empty",
+    head: "_empty",
+  };
+  res.render("partials/_shell", templateVars);
+});
 
 /*
 GET /urls/new
@@ -69,7 +86,14 @@ a submit button which makes a POST request to /urls
 if user is not logged in:
 redirects to the /login page
 */
-app.get("/urls/new", (req, res) => {});
+app.get("/urls/new", (req, res) => {
+  const templateVars = {
+    title: "",
+    body: "_empty",
+    head: "_empty",
+  };
+  res.render("partials/_shell", templateVars);
+});
 
 /*
 GET /urls/:id
@@ -91,7 +115,14 @@ returns HTML with a relevant error message
 if user is logged it but does not own the URL with the given ID:
 returns HTML with a relevant error message
 */
-app.get("/urls/:id", (req, res) => {});
+app.get("/urls/:id", (req, res) => {
+  const templateVars = {
+    title: "",
+    body: "_empty",
+    head: "_empty",
+  };
+  res.render("partials/_shell", templateVars);
+});
 
 /*
 GET /u/:id
@@ -101,7 +132,14 @@ redirects to the corresponding long URL
 if URL for the given ID does not exist:
 (Minor) returns HTML with a relevant error message
 */
-app.get("/u/:id", (req, res) => {});
+app.get("/u/:id", (req, res) => {
+  const templateVars = {
+    title: "",
+    body: "_empty",
+    head: "_empty",
+  };
+  res.render("partials/_shell", templateVars);
+});
 
 /*
 POST /urls
@@ -112,7 +150,7 @@ redirects to /urls/:id, where :id matches the ID of the newly saved URL
 if user is not logged in:
 (Minor) returns HTML with a relevant error message
 */
-app.post("/urls", (req, res) => {});
+app.post("/urls", (req, res) => { });
 
 /*
 POST /urls/:id
@@ -133,7 +171,7 @@ if user is not logged in:
 if user is logged it but does not own the URL for the given ID:
 (Minor) returns HTML with a relevant error message
 */
-app.post("/urls/:id", (req, res) => {});
+app.post("/urls/:id", (req, res) => { });
 
 /*
 GET /login
@@ -146,7 +184,14 @@ a form which contains:
 input fields for email and password
 submit button that makes a POST request to /login
 */
-app.get("/login", (req, res) => {});
+app.get("/login", (req, res) => {
+  const templateVars = {
+    title: "",
+    body: "../pages/login",
+    head: "_empty",
+  };
+  res.render("partials/_shell", templateVars);
+});
 
 /*
 GET /register
@@ -159,7 +204,14 @@ a form which contains:
 input fields for email and password
 a register button that makes a POST request to /register
 */
-app.get("/register", (req, res) => {});
+app.get("/register", (req, res) => {
+  const templateVars = {
+    title: "",
+    body: "_empty",
+    head: "_empty",
+  };
+  res.render("partials/_shell", templateVars);
+});
 
 /*
 POST /login
@@ -170,7 +222,7 @@ redirects to /urls
 if email and password params don't match an existing user:
 returns HTML with a relevant error message
 */
-app.post("/login", (req, res) => {});
+app.post("/login", (req, res) => { });
 
 /*
 POST /register
@@ -185,7 +237,7 @@ encrypts the new user's password with bcrypt
 sets a cookie
 redirects to /urls
 */
-app.post("/register", (req, res) => {});
+app.post("/register", (req, res) => { });
 
 /*
 POST /logout
@@ -193,7 +245,7 @@ POST /logout
 deletes cookie
 redirects to /urls
 */
-app.post("/logout", (req, res) => {});
+app.post("/logout", (req, res) => { });
 
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
