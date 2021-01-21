@@ -1,15 +1,12 @@
-<form>
+<form method="POST" style="display: inline;">
   <div class="mb-3">
     <label for="username" class="form-label">Username</label>
-    <input type="input" class="form-control" id="username">
+    <input type="input" class="form-control" name="username">
   </div>
   <div class="mb-3">
     <label for="password" class="form-label">Password</label>
-    <input type="password" class="form-control" id="password">
+    <input type="password" class="form-control" name="password">
   </div>
-  <div class="mb-3 form-check">
-    <input type="checkbox" class="form-check-input" id="cookieExpires">
-    <label class="form-check-label" for="cookieExpires">Remember Me</label>
-  </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
+  <button type="submit" formaction="/login" class="btn btn-primary">Login</button>
+  <button type="submit" formaction="/register" class="btn btn-secondary">Register</button>
 </form>

@@ -1,22 +1,159 @@
 const { authentication } = require("./middleware/authentication");
-const { authorization } = require("./middleware/authorization");
-const { mockDatabase } = require("./middleware/mockDatabase");
-const { uniqueURL } = require("./middleware/uniqueURL");
+// const { authorization } = require("./middleware/authorization");
+const { database } = require("./middleware/mockDatabase");
+// const { uniqueURL } = require("./middleware/uniqueURL");
+const { logging } = require("./middleware/logging");
 const express = require("express");
+const bcrypt = require("bcrypt");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
+// const { request } = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080; // default port 8080
 const HOSTNAME = process.env.HOSTNAME || "localhost"; // default port 8080
-const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
+app.use(
+  cookieSession({
+    name: "session",
+    keys: [process.env.SECRET],
+    maxAge: 24 * 60 * 60 * 1000 * 365, // year
+  })
+);
+app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
-if (process.env.SECRET) {
-  app.use(cookieParser(process.env.SECRET));
-} else {
-  app.use(cookieParser());
-}
-
 app.set("view engine", "ejs");
+app.use(logging);
 app.use(authentication);
+
+/*
+GET /login
+
+if user is logged in:
+(Minor) redirects to /urls
+if user is not logged in:
+returns HTML with:
+a form which contains:
+input fields for email and password
+submit button that makes a POST request to /login
+*/
+app.get("/login", (req, res) => {
+  const templateVars = {
+    title: "",
+    body: "../pages/login",
+    head: "_empty",
+  };
+  res.render("partials/_shell", templateVars);
+});
+
+/*
+POST /login
+
+if email and password params match an existing user:
+sets a cookie
+redirects to /urls
+if email and password params don't match an existing user:
+returns HTML with a relevant error message
+*/
+app.post("/login", async (req, res) => {
+  if (!req.formPassword) {
+    const templateVars = {
+      title: "",
+      body: "../pages/login",
+      head: "_empty",
+      errorType: "Need a password",
+    };
+    res.render("partials/_shell", templateVars);
+  } else if (!req.formUsername) {
+    const templateVars = {
+      title: "",
+      body: "../pages/login",
+      head: "_empty",
+      errorType: "Need a username",
+    };
+    res.render("partials/_shell", templateVars);
+  } else if (database.validNewUsername(req.formUsername)){
+    const templateVars = {
+      title: "",
+      body: "../pages/login",
+      head: "_empty",
+      errorType: "Invalid username or password",
+    };
+    res.render("partials/_shell", templateVars);
+  } else if (
+    bcrypt.compareSync(
+      req.formPassword,
+      database.getPasswordHash(req.formUsername)
+    )
+  ) {
+    req.session.username = req.formUsername;
+    res.redirect(`/urls`);
+  } else {
+    const templateVars = {
+      title: "",
+      body: "../pages/login",
+      head: "_empty",
+      errorType: "Invalid username or password",
+    };
+    res.render("partials/_shell", templateVars);
+  }
+});
+
+/*
+POST /register
+
+if email or password are empty:
+returns HTML with a relevant error message
+if email already exists:
+returns HTML with a relevant error message
+otherwise:
+creates a new user
+encrypts the new user's password with bcrypt
+sets a cookie
+redirects to /urls
+*/
+app.post("/register", (req, res) => {
+  if (
+    database.validNewUsername(req.formUsername) &&
+    database.validNewPassword(req.formPassword)
+  ) {
+    const hashedPassword = bcrypt.hashSync(req.formPassword, 10);
+    database.addUser(req.formUsername, hashedPassword);
+    req.session.username = req.formUsername;
+    res.redirect(`/urls`);
+  } else if (!req.formPassword) {
+    const templateVars = {
+      title: "",
+      body: "../pages/login",
+      head: "_empty",
+      errorType: "Need a password",
+    };
+    res.render("partials/_shell", templateVars);
+  } else if (!req.formUsername) {
+    const templateVars = {
+      title: "",
+      body: "../pages/login",
+      head: "_empty",
+      errorType: "Need a username",
+    };
+    res.render("partials/_shell", templateVars);
+  } else if (!database.validNewUsername(req.formUsername)) {
+    const templateVars = {
+      title: "",
+      body: "../pages/login",
+      head: "_empty",
+      errorType: "Invalid username",
+    };
+    res.render("partials/_shell", templateVars);
+  } else if (!database.validNewPassword(req.formPassword)) {
+    const templateVars = {
+      title: "",
+      body: "../pages/login",
+      head: "_empty",
+      errorType: "Invalid password",
+    };
+    res.render("partials/_shell", templateVars);
+  }
+});
 
 /*
 GET /
@@ -27,8 +164,8 @@ if user is not logged in:
 (Minor) redirect to /login
 */
 app.get("/", (req, res) => {
-  console.log(req.user);
-  if (req.user !== undefined) {
+  console.log(req.session.username);
+  if (req.session.username !== undefined) {
     res.redirect(`/urls`);
   } else {
     res.redirect(`/login`);
@@ -54,18 +191,6 @@ if user is not logged in:
 returns HTML with a relevant error message
 */
 app.get("/urls", (req, res) => {
-  const templateVars = {
-    title: "",
-    body: "_empty",
-    head: "_empty",
-  };
-  res.render("partials/_shell", templateVars);
-});
-
-/*
-
-*/
-app.get("/urls/new", (req, res) => {
   const templateVars = {
     title: "",
     body: "_empty",
@@ -150,7 +275,7 @@ redirects to /urls/:id, where :id matches the ID of the newly saved URL
 if user is not logged in:
 (Minor) returns HTML with a relevant error message
 */
-app.post("/urls", (req, res) => { });
+app.post("/urls", (req, res) => {});
 
 /*
 POST /urls/:id
@@ -171,27 +296,7 @@ if user is not logged in:
 if user is logged it but does not own the URL for the given ID:
 (Minor) returns HTML with a relevant error message
 */
-app.post("/urls/:id", (req, res) => { });
-
-/*
-GET /login
-
-if user is logged in:
-(Minor) redirects to /urls
-if user is not logged in:
-returns HTML with:
-a form which contains:
-input fields for email and password
-submit button that makes a POST request to /login
-*/
-app.get("/login", (req, res) => {
-  const templateVars = {
-    title: "",
-    body: "../pages/login",
-    head: "_empty",
-  };
-  res.render("partials/_shell", templateVars);
-});
+app.post("/urls/:id", (req, res) => {});
 
 /*
 GET /register
@@ -214,38 +319,12 @@ app.get("/register", (req, res) => {
 });
 
 /*
-POST /login
-
-if email and password params match an existing user:
-sets a cookie
-redirects to /urls
-if email and password params don't match an existing user:
-returns HTML with a relevant error message
-*/
-app.post("/login", (req, res) => { });
-
-/*
-POST /register
-
-if email or password are empty:
-returns HTML with a relevant error message
-if email already exists:
-returns HTML with a relevant error message
-otherwise:
-creates a new user
-encrypts the new user's password with bcrypt
-sets a cookie
-redirects to /urls
-*/
-app.post("/register", (req, res) => { });
-
-/*
 POST /logout
 
 deletes cookie
 redirects to /urls
 */
-app.post("/logout", (req, res) => { });
+app.post("/logout", (req, res) => {});
 
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
