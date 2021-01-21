@@ -4,25 +4,10 @@ const database = {
     bryce: {
       password: "$2b$10$CIN027TljJ2QfM.zDmywFe/ss1tdU2QeHcHV1reSzbxMW0FuuEWbK",
       fp: {},
-      urls: {
-        // DLfxiS: { username: "bryce", longURL: "http://youtube.com", views: {} },
-      },
+      urls: { },
     },
   },
-  _urls: {
-    // DLfxiS: { username: "bryce", longURL: "http://youtube.com", views: {} },
-  },
-  // _usernames: {
-  //   bryce: {
-  //     password: "$2b$10$AIMSZnt8GI7NNnBXjWjE6e6/MAQzRXx6CKd1qMrnZvPWb8E3Lw7Le",
-  //     fp: {},
-  //     urls: {},
-  //   },
-  // },
-  // _urls: {
-  //   cvHGce: { username: 'bryce', longURL: 'http://youtube.com', views: {} }
-
-  // },
+  _urls: { },
   addUsername(username, password) {
     this._usernames[username] = {
       password,
@@ -30,7 +15,7 @@ const database = {
       urls: {},
     };
   },
-  validnewUsername(newUsername) {
+  validNewUsername(newUsername) {
     if (
       newUsername !== null &&
       typeof this._usernames[newUsername] === "undefined" &&
@@ -55,25 +40,29 @@ const database = {
     return this._usernames[username].urls;
   },
   newURL(longURL, username) {
-    const shortURL = uniqueURL();
-    if (!longURL.includes("http://") || !longURL.includes("http://")) {
-      longURL = "http://" + longURL;
+    if (!this.validNewUsername(username)) {
+      const shortURL = uniqueURL();
+      if (!longURL.includes("http://") || !longURL.includes("http://")) {
+        longURL = "http://" + longURL;
+      }
+      this._urls[shortURL] = {
+        dateCreated: new Date(),
+        username,
+        longURL,
+        views: {},
+      };
+      this._usernames[username].urls[shortURL] = this._urls[shortURL];
+      return shortURL;      
+    } else{
+      return null
     }
-    this._urls[shortURL] = {
-      dateCreated: new Date(),
-      username,
-      longURL,
-      views: {},
-    };
-    // this._usernames[username].urls[shortURL] = longURL;
-    this._usernames[username].urls[shortURL] = this._urls[shortURL];
-    return shortURL;
+
   },
   getURL(shortURL) {
     if (typeof this._urls[shortURL] !== "undefined") {
       return this._urls[shortURL].longURL;
     } else {
-      return undefined
+      return null
     }
   },
 };

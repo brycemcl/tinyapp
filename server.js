@@ -71,7 +71,7 @@ app.post("/login", async (req, res) => {
       errorType: "Need a username",
     };
     res.render("partials/_shell", templateVars);
-  } else if (database.validnewUsername(req.formUsername)){
+  } else if (database.validNewUsername(req.formUsername)){
     const templateVars = {
       title: "",
       body: "../pages/login",
@@ -113,7 +113,7 @@ redirects to /urls
 */
 app.post("/register", (req, res) => {
   if (
-    database.validnewUsername(req.formUsername) &&
+    database.validNewUsername(req.formUsername) &&
     database.validNewPassword(req.formPassword)
   ) {
     const hashedPassword = bcrypt.hashSync(req.formPassword, 10);
@@ -136,7 +136,7 @@ app.post("/register", (req, res) => {
       errorType: "Need a username",
     };
     res.render("partials/_shell", templateVars);
-  } else if (!database.validnewUsername(req.formUsername)) {
+  } else if (!database.validNewUsername(req.formUsername)) {
     const templateVars = {
       title: "",
       body: "../pages/login",
@@ -241,40 +241,26 @@ if user is logged it but does not own the URL with the given ID:
 returns HTML with a relevant error message
 */
 app.get("/urls/:shortURL",authorization, (req, res) => {
-  const templateVars = {
-    title: "",
-    body: "../pages/urlDetails",
-    head: "_empty",
-    shortURL: req.params.shortURL,
-    urls: database.getUrls(req.session.username)
-  };
-  if (templateVars.urls.hasOwnProperty(templateVars.shortURL)) {
-    res.render("partials/_shell", templateVars);
+  if (database.getUrls(req.session.username).hasOwnProperty(req.params.shortURL)) {
+    const templateVars = {
+      title: "",
+      body: "../pages/urlDetails",
+      head: "_empty",
+      shortURL: req.params.shortURL,
+      urls: database.getUrls(req.session.username)
+    };
+      res.render("partials/_shell", templateVars);
   } else {
-    
+    const templateVars = {
+      title: "",
+      body: "../pages/login",
+      head: "_empty",
+      errorType: "URL does not exist",
+    };
+    res.render("partials/_emptyShell", templateVars);
   }
 });
 
-/*
-GET /:id
-
-if URL for the given ID exists:
-redirects to the corresponding long URL
-if URL for the given ID does not exist:
-(Minor) returns HTML with a relevant error message
-*/
-app.get("/:shortURL", (req, res) => {
-  const templateVars = {
-    title: "",
-    body: "../partials/_redirect",
-    head: "_empty",
-    shortURL: req.params.shortURL,
-    longURL: database.getURL(req.params.shortURL)
-  };
-  console.log("here")
-  console.log(templateVars)
-  res.render("partials/_emptyShell", templateVars);
-});
 
 /*
 POST /urls
@@ -310,7 +296,8 @@ if user is not logged in:
 if user is logged it but does not own the URL for the given ID:
 (Minor) returns HTML with a relevant error message
 */
-app.post("/urls/:id", (req, res) => {});
+app.post("/urls/:id", (req, res) => {
+});
 
 /*
 GET /register
@@ -333,29 +320,15 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/urls/:shortURL/:fp/track", (req, res) => {
-console.log("tracking link")
-console.log(req.params.shortURL)
-console.log(database.getURL(req.params.shortURL))
-
-//typeof this._usernames[newUsername] === "undefined"
-console.log(req.params.fp)
-if (database.getURL(req.params.shortURL)) {
-  const templateVars = {
-    title: "",
-    body: "_empty",
-    head: "_empty",
-    shortURL: req.params.shortURL,
-    longURL: database.getURL(req.params.shortURL)
-  };
-  res.render("partials/_emptyShell", templateVars);
+  console.log("tracking link")
+  console.log(req.params.shortURL)
+  console.log(database.getURL(req.params.shortURL))
   
-} else {
-  const templateVars = {
-    title: "",
-    body: "../pages/login",
-    head: "_empty",
-    errorType: "Invalid url",
-  };
+  //typeof this._usernames[newUsername] === "undefined"
+  console.log(req.params.fp)
+  if (database.getURL(req.params.shortURL)) {    
+    res.sendStatus(200);
+  } else {
   res.sendStatus(404);
 }
 });
@@ -366,9 +339,43 @@ POST /logout
 deletes cookie
 redirects to /login
 */
-app.post("/logout",authorization, (req, res) => {
+app.post("/logout", (req, res) => {
   req.session = null
   res.redirect(`/login`);
+});
+
+app.get("/logout", (req, res) => {
+  req.session = null
+  res.redirect(`/login`);
+});
+
+/*
+GET /:id
+
+if URL for the given ID exists:
+redirects to the corresponding long URL
+if URL for the given ID does not exist:
+(Minor) returns HTML with a relevant error message
+*/
+app.get("/:shortURL", (req, res) => {
+  if (typeof req.params.shortURL !== "undefined") {
+    const templateVars = {
+      title: "",
+      body: "../partials/_redirect",
+      head: "_empty",
+      shortURL: req.params.shortURL,
+      longURL: database.getURL(req.params.shortURL)
+    };
+    res.render("partials/_emptyShell", templateVars);
+  } else {
+    const templateVars = {
+      title: "",
+      body: "../pages/login",
+      head: "_empty",
+      errorType: "URL does not exist",
+    };
+    res.render("partials/_emptyShell", templateVars);
+  }
 });
 
 app.listen(PORT, () => {
