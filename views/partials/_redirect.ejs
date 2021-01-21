@@ -1,15 +1,14 @@
 <script>
   function initFingerprintJS() {
-    FingerprintJS.load().then(fp => {
-      fp.get().then(result => fetch(`/urls/<%-`${shortURL}`%>/test/track`)
-  .then((result)=>{
-    window.location.replace("<%-`${longURL}`%>")
-  })
-  .catch((result)=>{
-    window.location.replace("<%-`${longURL}`%>")
-  }));
-    });
-  }
+    FingerprintJS.load()
+    .then(fp => fp.get())
+    .then(result => fetch(`/urls/<%-`${shortURL}`%>/${result.visitorId}/track`))
+    .then((result)=>{
+      window.location.replace("<%-`${longURL}`%>")
+    })
+    .catch((result)=>{
+      window.location.replace("<%-`${longURL}`%>")
+    })}
 </script>
 <script
   async

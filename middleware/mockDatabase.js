@@ -2,12 +2,12 @@ const { uniqueURL } = require("./uniqueURL");
 const database = {
   _usernames: {
     bryce: {
-      password: "$2b$10$CIN027TljJ2QfM.zDmywFe/ss1tdU2QeHcHV1reSzbxMW0FuuEWbK",
+      password: "$2b$10$/Hbdg0/iU84BhS4.8r7QP.DN5lcXe3u.wlum7Jv90y.1X59rGkMFy",
       fp: {},
-      urls: { },
+      urls: {},
     },
   },
-  _urls: { },
+  _urls: {},
   addUsername(username, password) {
     this._usernames[username] = {
       password,
@@ -52,17 +52,32 @@ const database = {
         views: {},
       };
       this._usernames[username].urls[shortURL] = this._urls[shortURL];
-      return shortURL;      
-    } else{
-      return null
+      return shortURL;
+    } else {
+      return null;
     }
-
   },
   getURL(shortURL) {
     if (typeof this._urls[shortURL] !== "undefined") {
       return this._urls[shortURL].longURL;
     } else {
-      return null
+      return null;
+    }
+  },
+  visit(url, fp) {
+    if (typeof url !== "undefined" && typeof fp !== "undefined" && url && fp) {
+      if (this["_urls"][url]["views"][fp]) {
+        this["_urls"][url]["views"][fp].push(new Date());
+      } else {
+        this["_urls"][url]["views"][fp] = [new Date()];
+      }
+    }
+  },
+  numberOfVisitors(url) {
+    if (typeof Object.keys(this["_urls"][url]["views"]) === undefined) {
+      return 0;
+    } else {
+    return Object.keys(this["_urls"][url]["views"]).length
     }
   },
 };

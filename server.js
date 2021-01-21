@@ -42,7 +42,7 @@ app.get("/login", (req, res) => {
     body: "../pages/login",
     head: "_empty",
   };
-  res.render("partials/_shell", templateVars);
+  res.render("partials/_shellLogin", templateVars);
 });
 
 /*
@@ -257,7 +257,7 @@ app.get("/urls/:shortURL",authorization, (req, res) => {
       head: "_empty",
       errorType: "URL does not exist",
     };
-    res.render("partials/_emptyShell", templateVars);
+    res.render("partials/_shell", templateVars);
   }
 });
 
@@ -271,7 +271,7 @@ redirects to /urls/:id, where :id matches the ID of the newly saved URL
 if user is not logged in:
 (Minor) returns HTML with a relevant error message
 */
-app.post("/urls", (req, res) => {
+app.post("/urls",authorization, (req, res) => {
   const longURL = req.body.longURL;
   const shortURL = database.newURL(longURL, req.session.username);
   res.redirect(`/urls/${shortURL}`);
@@ -320,12 +320,14 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/urls/:shortURL/:fp/track", (req, res) => {
-  console.log("tracking link")
-  console.log(req.params.shortURL)
-  console.log(database.getURL(req.params.shortURL))
-  
+  // console.log("tracking link")
+  // console.log(req.params.shortURL)
+  // console.log(database.getURL(req.params.shortURL))
+  console.log(database.numberOfVisitors(req.params.shortURL))
+  database.visit(req.params.shortURL, req.params.fp)
+  // console.log(database.numberOfVisitors(req.params.shortURL))
   //typeof this._usernames[newUsername] === "undefined"
-  console.log(req.params.fp)
+  // console.log(req.params.fp)
   if (database.getURL(req.params.shortURL)) {    
     res.sendStatus(200);
   } else {
@@ -374,7 +376,7 @@ app.get("/:shortURL", (req, res) => {
       head: "_empty",
       errorType: "URL does not exist",
     };
-    res.render("partials/_emptyShell", templateVars);
+    res.render("partials/_Shell", templateVars);
   }
 });
 
