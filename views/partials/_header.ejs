@@ -1,13 +1,22 @@
 <header>
   <nav class="navbar navbar-expand-md navbar-dark bg-success">
-    <a class="navbar-brand" href="/urls" style="margin: 0px 16px 0px 16px;">TinyApp</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
-        <a class="nav-item nav-link" href="/urls">My URLs</a>
-        <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+    <div class="container-fluid">
+      <a class="navbar-brand" style="padding: 9px 0px;" href="/">TinyApp</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" href="/urls">My URLs</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/urls/new">Create New URL</a>
+          </li>
+        </ul>
+      <form method="POST" action="/logout" class="d-flex">
+        <button class="btn btn btn-primary" type="submit">Logout</button>
+      </form>
       </div>
     </div>
   </nav>

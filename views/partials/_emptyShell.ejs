@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TinyApp<%if(title){%><%=` - ${title}`%><%}%></title>
+    <%- include(head) %>
+  </head>
+  <body>
+    <%- include("_error") %>
+    <%- include(body) %>
+
+  </body>
+</html>

@@ -1,0 +1,43 @@
+<h3>TinyURL for <%= urls[shortURL].longURL.split("://")[1] %></h3>
+<div class="form-group mb-2">Short URL: <a href="/<%= `${shortURL}` %>" ><%= shortURL %></a></div>
+<div class="table-responsive"></div>
+<table class="table table-hover">
+  <thead>
+    <tr>
+
+      <th scope="col">Date Created</th>
+      <th scope="col">Unique Visitors</th>
+      <th scope="col">Short URL</th>
+      <th scope="col">Long URL</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for(let url in urls) { %>
+      <tr>
+        <td><%= urls[url].dateCreated.toLocaleString('en-CA', { timeZone: 'America/Vancouver' }) %></td>
+        <td></td>
+        <td><a href="/<%= `${shortURL}` %>">
+            <%= url %>
+          </a></td>
+        <td><a href="<%= urls[url].longURL %>">
+            <%= urls[url].longURL.split("://")[1] %>
+          </a></td>
+        <td>
+          <form action="/urls/<%= url %>/edit" method="get" style="display: inline">
+            <button type="submit" class="btn btn-primary">Edit</button>
+          </form>
+          <form action="/urls/<%= `${url}/delete` %>" method="post" style="display: inline">
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      <% } %>
+  </tbody>
+</table>
+</div>
+
+<% for(let url in urls) { %>
+  <tr>
+  </tr>
+<% } %>

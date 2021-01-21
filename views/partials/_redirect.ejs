@@ -1,0 +1,18 @@
+<script>
+  function initFingerprintJS() {
+    FingerprintJS.load().then(fp => {
+      fp.get().then(result => fetch(`/urls/<%-`${shortURL}`%>/test/track`)
+  .then((result)=>{
+    window.location.replace("<%-`${longURL}`%>")
+  })
+  .catch((result)=>{
+    window.location.replace("<%-`${longURL}`%>")
+  }));
+    });
+  }
+</script>
+<script
+  async
+  src="//cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
+  onload="initFingerprintJS()"
+></script>

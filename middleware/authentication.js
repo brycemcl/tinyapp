@@ -19,7 +19,6 @@ req.cookieUsername = cookieUsername
 req.formUsername = formUsername
 req.formPassword = formPassword
 req.formCookieExpires = formCookieExpires
-console.log(formPassword)
 next()
 };
 module.exports = { authentication };
