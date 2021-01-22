@@ -15,6 +15,7 @@
   <tbody>
     <% for(let url in urls) { %>
       <tr>
+
         <td><%= urls[url].dateCreated.toLocaleString('en-CA', { timeZone: 'America/Vancouver' }) %></td>
         <td><%= Object.keys(urls[shortURL].views).length %></td>
         <td><a href="/<%= `${shortURL}` %>">
@@ -31,6 +32,7 @@
             <button type="submit" class="btn btn-danger">Delete</button>
           </form>
         </td>
+
       </tr>
       <% } %>
   </tbody>

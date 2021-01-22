@@ -15,25 +15,27 @@
   <tbody>
     <% for(let url in urls) { %>
       <tr>
-        <td><%= urls[url].dateCreated.toLocaleString('en-CA', { timeZone: 'America/Vancouver' }) %></td>
-        <td></td>
-        <td><a href="<%= url %>">
-            <%= url %>
-          </a></td>
-        <td><a href="<%= urls[url].longURL %>">
-            <%= urls[url].longURL.split("://")[1] %>
-          </a></td>
-        <td>
-          <form action="/urls/<%= url %>" method="get" style="display: inline">
-            <button type="submit" class="btn btn-success">Details</button>
-          </form>
-          <form action="/urls/<%= url %>/edit" method="get" style="display: inline">
-            <button type="submit" class="btn btn-primary">Edit</button>
-          </form>
-          <form action="/urls/<%= `${url}/delete` %>" method="post" style="display: inline">
-            <button type="submit" class="btn btn-danger">Delete</button>
-          </form>
-        </td>
+            <td>
+              <%= urls[url].dateCreated.toLocaleString('en-CA', { timeZone: 'America/Vancouver' }) %>
+            </td>
+            <td><%=Object.keys(urls[url].views).length %></td>
+            <td><a href="<%= url %>">
+                <%= url %>
+              </a></td>
+            <td><a href="<%= urls[url].longURL %>">
+                <%= urls[url].longURL.split("://")[1] %>
+              </a></td>
+            <td>
+              <form action="/urls/<%= url %>" method="get" style="display: inline">
+                <button type="submit" class="btn btn-success">Details</button>
+              </form>
+              <form action="/urls/<%= url %>/edit" method="get" style="display: inline">
+                <button type="submit" class="btn btn-primary">Edit</button>
+              </form>
+              <form action="/urls/<%= `${url}/delete` %>" method="post" style="display: inline">
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </td>
       </tr>
       <% } %>
   </tbody>
