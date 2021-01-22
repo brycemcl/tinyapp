@@ -62,7 +62,7 @@ app.post("/login", async (req, res) => {
       head: "_empty",
       errorType: "Need a password",
     };
-    res.render("partials/_shell", templateVars);
+    res.render("partials/_shellLogin", templateVars);
   } else if (!req.formUsername) {
     const templateVars = {
       title: "",
@@ -70,15 +70,15 @@ app.post("/login", async (req, res) => {
       head: "_empty",
       errorType: "Need a username",
     };
-    res.render("partials/_shell", templateVars);
-  } else if (database.validNewUsername(req.formUsername)){
+    res.render("partials/_shellLogin", templateVars);
+  } else if (database.validNewUsername(req.formUsername)) {
     const templateVars = {
       title: "",
       body: "../pages/login",
       head: "_empty",
       errorType: "Invalid username or password",
     };
-    res.render("partials/_shell", templateVars);
+    res.render("partials/_shellLogin", templateVars);
   } else if (
     bcrypt.compareSync(
       req.formPassword,
@@ -94,7 +94,7 @@ app.post("/login", async (req, res) => {
       head: "_empty",
       errorType: "Invalid username or password",
     };
-    res.render("partials/_shell", templateVars);
+    res.render("partials/_shellLogin", templateVars);
   }
 });
 
@@ -127,7 +127,7 @@ app.post("/register", (req, res) => {
       head: "_empty",
       errorType: "Need a password",
     };
-    res.render("partials/_shell", templateVars);
+    res.render("partials/_shellLogin", templateVars);
   } else if (!req.formUsername) {
     const templateVars = {
       title: "",
@@ -135,7 +135,7 @@ app.post("/register", (req, res) => {
       head: "_empty",
       errorType: "Need a username",
     };
-    res.render("partials/_shell", templateVars);
+    res.render("partials/_shellLogin", templateVars);
   } else if (!database.validNewUsername(req.formUsername)) {
     const templateVars = {
       title: "",
@@ -143,7 +143,7 @@ app.post("/register", (req, res) => {
       head: "_empty",
       errorType: "Choose another username",
     };
-    res.render("partials/_shell", templateVars);
+    res.render("partials/_shellLogin", templateVars);
   } else if (!database.validNewPassword(req.formPassword)) {
     const templateVars = {
       title: "",
@@ -151,7 +151,7 @@ app.post("/register", (req, res) => {
       head: "_empty",
       errorType: "Invalid password",
     };
-    res.render("partials/_shell", templateVars);
+    res.render("partials/_shellLogin", templateVars);
   }
 });
 
@@ -189,12 +189,13 @@ a delete button which makes a POST request to /urls/:id/delete
 if user is not logged in:
 returns HTML with a relevant error message
 */
-app.get("/urls",authorization, (req, res) => {
+app.get("/urls", authorization, (req, res) => {
   const templateVars = {
     title: "",
     body: "../pages/urlList",
     head: "_empty",
-    urls: database.getUrls(req.session.username)
+    username: req.session.username,
+    urls: database.getUrls(req.session.username),
   };
   res.render("partials/_shell", templateVars);
 });
@@ -211,11 +212,12 @@ a submit button which makes a POST request to /urls
 if user is not logged in:
 redirects to the /login page
 */
-app.get("/urls/new",authorization, (req, res) => {
+app.get("/urls/new", authorization, (req, res) => {
   const templateVars = {
     title: "",
     body: "../pages/newUrl",
     head: "_empty",
+    username: req.session.username,
   };
   res.render("partials/_shell", templateVars);
 });
@@ -240,16 +242,19 @@ returns HTML with a relevant error message
 if user is logged it but does not own the URL with the given ID:
 returns HTML with a relevant error message
 */
-app.get("/urls/:shortURL",authorization, (req, res) => {
-  if (database.getUrls(req.session.username).hasOwnProperty(req.params.shortURL)) {
+app.get("/urls/:shortURL", authorization, (req, res) => {
+  if (
+    database.getUrls(req.session.username).hasOwnProperty(req.params.shortURL)
+  ) {
     const templateVars = {
       title: "",
       body: "../pages/urlDetails",
       head: "_empty",
       shortURL: req.params.shortURL,
-      urls: database.getUrls(req.session.username)
+      urls: database.getUrls(req.session.username),
+      username: req.session.username,
     };
-      res.render("partials/_shell", templateVars);
+    res.render("partials/_shell", templateVars);
   } else {
     const templateVars = {
       title: "",
@@ -257,10 +262,9 @@ app.get("/urls/:shortURL",authorization, (req, res) => {
       head: "_empty",
       errorType: "URL does not exist",
     };
-    res.render("partials/_shell", templateVars);
+    res.render("partials/_shellLogin", templateVars);
   }
 });
-
 
 /*
 POST /urls
@@ -271,7 +275,7 @@ redirects to /urls/:id, where :id matches the ID of the newly saved URL
 if user is not logged in:
 (Minor) returns HTML with a relevant error message
 */
-app.post("/urls",authorization, (req, res) => {
+app.post("/urls", authorization, (req, res) => {
   const longURL = req.body.longURL;
   const shortURL = database.newURL(longURL, req.session.username);
   res.redirect(`/urls/${shortURL}`);
@@ -287,6 +291,10 @@ if user is not logged in:
 (Minor) returns HTML with a relevant error message
 if user is logged it but does not own the URL for the given ID:
 (Minor) returns HTML with a relevant error message
+*/
+app.post("/urls/:id", (req, res) => {});
+
+/*
 POST /urls/:id/delete
 if user is logged in and owns the URL for the given ID:
 deletes the URL
@@ -296,8 +304,7 @@ if user is not logged in:
 if user is logged it but does not own the URL for the given ID:
 (Minor) returns HTML with a relevant error message
 */
-app.post("/urls/:id", (req, res) => {
-});
+app.post("/urls/:id/delete", (req, res) => {});
 
 /*
 GET /register
@@ -315,6 +322,7 @@ app.get("/register", (req, res) => {
     title: "",
     body: "_empty",
     head: "_empty",
+    username: req.session.username,
   };
   res.render("partials/_shell", templateVars);
 });
@@ -323,16 +331,16 @@ app.get("/urls/:shortURL/:fp/track", (req, res) => {
   // console.log("tracking link")
   // console.log(req.params.shortURL)
   // console.log(database.getURL(req.params.shortURL))
-  console.log(database.numberOfVisitors(req.params.shortURL))
-  database.visit(req.params.shortURL, req.params.fp)
+  console.log(database.numberOfVisitors(req.params.shortURL));
+  database.visit(req.params.shortURL, req.params.fp);
   // console.log(database.numberOfVisitors(req.params.shortURL))
   //typeof this._usernames[newUsername] === "undefined"
   // console.log(req.params.fp)
-  if (database.getURL(req.params.shortURL)) {    
+  if (database.getURL(req.params.shortURL)) {
     res.sendStatus(200);
   } else {
-  res.sendStatus(404);
-}
+    res.sendStatus(404);
+  }
 });
 
 /*
@@ -342,12 +350,12 @@ deletes cookie
 redirects to /login
 */
 app.post("/logout", (req, res) => {
-  req.session = null
+  req.session = null;
   res.redirect(`/login`);
 });
 
 app.get("/logout", (req, res) => {
-  req.session = null
+  req.session = null;
   res.redirect(`/login`);
 });
 
@@ -366,7 +374,7 @@ app.get("/:shortURL", (req, res) => {
       body: "../partials/_redirect",
       head: "_empty",
       shortURL: req.params.shortURL,
-      longURL: database.getURL(req.params.shortURL)
+      longURL: database.getURL(req.params.shortURL),
     };
     res.render("partials/_emptyShell", templateVars);
   } else {
@@ -376,7 +384,7 @@ app.get("/:shortURL", (req, res) => {
       head: "_empty",
       errorType: "URL does not exist",
     };
-    res.render("partials/_Shell", templateVars);
+    res.render("partials/_shellLogin", templateVars);
   }
 });
 
