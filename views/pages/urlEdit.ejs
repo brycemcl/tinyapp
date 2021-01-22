@@ -18,17 +18,17 @@
 
         <td><input disabled type="text" class="form-control text" placeholder="<%= urls[url].dateCreated.toLocaleString('en-CA', { timeZone: 'America/Vancouver' }) %>"></td>
         <td><input disabled type="text" class="form-control text" placeholder="<%= Object.keys(urls[shortUrl].views).length %>"></td>
-        <td><a href="/<%= `${shortUrl}` %>">
-            <%= url %>
-          </a></td>
-        <td><a href="<%= urls[url].longUrl %>">
-            <%= urls[url].longUrl.split("://")[1] %>
-          </a></td>
+        <form action="/urls/<%= url %>" method="POST" style="display: inline">
         <td>
-          <form action="/urls/<%= url %>/edit" method="get" style="display: inline">
-            <button type="submit" class="btn btn-primary">Edit</button>
+          <input name="shortUrl" type="text" class="form-control text" placeholder="<%= url %>">
+        </td>
+        <td>
+          <input name="longUrl" type="text" class="form-control text" placeholder="<%= urls[url].longUrl.split("://")[1] %>">
+        </td>
+        <td>
+            <button  type="submit" class="btn btn-primary">Save</button>
           </form>
-          <form action="/urls/<%= `${url}/delete` %>" method="post" style="display: inline">
+          <form action="/urls/<%= `${url}/delete` %>" method="POST" style="display: inline">
             <button type="submit" class="btn btn-danger">Delete</button>
           </form>
         </td>

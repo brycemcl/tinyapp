@@ -16,15 +16,16 @@
     <% for(let url in urls) { %>
       <tr>
             <td>
-              <%= urls[url].dateCreated.toLocaleString('en-CA', { timeZone: 'America/Vancouver' }) %>
+              <input disabled type="text" class="form-control" placeholder="<%= urls[url].dateCreated.toLocaleString('en-CA', { timeZone: 'America/Vancouver' }) %>">
             </td>
-            <td><%=Object.keys(urls[url].views).length %></td>
-            <td><a href="<%= url %>">
-                <%= url %>
-              </a></td>
-            <td><a href="<%= urls[url].longURL %>">
-                <%= urls[url].longURL.split("://")[1] %>
-              </a></td>
+            <td>
+              <input disabled type="text" class="form-control" placeholder="<%=Object.keys(urls[url].views).length %>"></td>
+            <td>
+              <a href="<%= url %>"><%= url %></a>
+            </td>
+            <td>
+              <a href="<%= urls[url].longUrl %>"><%= urls[url].longUrl.split("://")[1] %></a>
+            </td>
             <td>
               <form action="/urls/<%= url %>" method="get" style="display: inline">
                 <button type="submit" class="btn btn-success">Details</button>
@@ -41,3 +42,9 @@
   </tbody>
 </table>
 </div>
+<style>
+  :disabled{
+    border-color: rgba(0, 0, 0, 0) !important;
+    background-color: rgba(0, 0, 0, 0) !important;
+  }
+</style>

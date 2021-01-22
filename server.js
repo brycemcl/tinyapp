@@ -1,14 +1,11 @@
 const { authentication } = require("./middleware/authentication");
 const { authorization } = require("./middleware/authorization");
 const { database } = require("./middleware/mockDatabase");
-// const { uniqueURL } = require("./middleware/uniqueURL");
-const { logging } = require("./middleware/logging");
 const express = require("express");
 const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
-// const { request } = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080; // default port 8080
 app.use(
@@ -21,7 +18,6 @@ app.use(
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
-app.use(logging);
 app.use(authentication);
 
 /*
@@ -222,7 +218,7 @@ app.get("/urls/new", authorization, (req, res) => {
 });
 
 /*
-GET /urls/:shortURL
+GET /urls/:shortUrl
 
 if user is logged in and owns the URL for the given ID:
 returns HTML with:
@@ -241,15 +237,15 @@ returns HTML with a relevant error message
 if user is logged it but does not own the URL with the given ID:
 returns HTML with a relevant error message
 */
-app.get("/urls/:shortURL", authorization, (req, res) => {
+app.get("/urls/:shortUrl", authorization, (req, res) => {
   if (
-    database.getUrls(req.session.username).hasOwnProperty(req.params.shortURL)
+    database.getUrls(req.session.username).hasOwnProperty(req.params.shortUrl)
   ) {
     const templateVars = {
       title: "",
       body: "../pages/urlDetails",
       head: "_empty",
-      shortURL: req.params.shortURL,
+      shortUrl: req.params.shortUrl,
       urls: database.getUrls(req.session.username),
       username: req.session.username,
     };
@@ -277,10 +273,40 @@ if user is not logged in:
 (Minor) returns HTML with a relevant error message
 */
 app.post("/urls", authorization, (req, res) => {
-  const longURL = req.body.longURL;
-  const shortURL = database.newURL(longURL, req.session.username);
-  res.redirect(`/urls/${shortURL}`);
+  const longUrl = req.body.longUrl;
+  const shortUrl = database.newURL(longUrl, req.session.username);
+  res.redirect(`/urls/${shortUrl}`);
 });
+
+
+
+
+app.get("/urls/:shortUrl/edit", authorization, (req, res) => {
+  if (
+    database.getUrls(req.session.username).hasOwnProperty(req.params.shortUrl)
+  ) {
+    const templateVars = {
+      title: "",
+      body: "../pages/urlEdit",
+      head: "_empty",
+      shortUrl: req.params.shortUrl,
+      urls: database.getUrls(req.session.username),
+      username: req.session.username,
+    };
+    res.render("partials/_shell", templateVars);
+  } else {
+    const templateVars = {
+      title: "",
+      body: "../pages/urlList",
+      head: "_empty",
+      errorType: "URL does not exist",
+      username: req.session.username,
+      urls: database.getUrls(req.session.username),
+    };
+    res.render("partials/_shell", templateVars);
+  }
+});
+
 
 /*
 POST /urls/:id
@@ -293,7 +319,31 @@ if user is not logged in:
 if user is logged it but does not own the URL for the given ID:
 (Minor) returns HTML with a relevant error message
 */
-app.post("/urls/:id", (req, res) => {});
+app.post("/urls/:previousShortUrl",authorization, (req, res) => {
+  if (
+    database.getUrls(req.session.username).hasOwnProperty(req.params.previousShortUrl)
+  ) {
+    let newShortUrl = req.params.previousShortUrl
+if (typeof req.formShortUrl !== "undefined" && database.validNewUrl(req.formShortUrl)) {
+  newShortUrl = database.renameShortUrl(req.session.username, req.params.previousShortUrl, req.formShortUrl)
+}
+if (req.formLongUrl) {
+  database.renameLongUrl(req.session.username, newShortUrl, req.formLongUrl)
+}
+res.redirect(`/urls/${newShortUrl}`);
+  } else {
+    const templateVars = {
+      title: "",
+      body: "../pages/urlList",
+      head: "_empty",
+      errorType: "URL does not exist",
+      username: req.session.username,
+      urls: database.getUrls(req.session.username),
+    };
+    res.render("partials/_shell", templateVars);
+  }
+
+});
 
 /*
 POST /urls/:id/delete
@@ -305,8 +355,8 @@ if user is not logged in:
 if user is logged it but does not own the URL for the given ID:
 (Minor) returns HTML with a relevant error message
 */
-app.post("/urls/:shortURL/delete",authorization, (req, res) => {
-  if(database.deleteUrl(req.params.shortURL, req.session.username)){
+app.post("/urls/:shortUrl/delete",authorization, (req, res) => {
+  if(database.deleteUrl(req.params.shortUrl, req.session.username)){
     res.redirect(`/urls/`)
   }else{
     const templateVars = {
@@ -343,16 +393,16 @@ app.get("/register", (req, res) => {
   res.render("partials/_shell", templateVars);
 });
 
-app.get("/urls/:shortURL/:fp/track", (req, res) => {
+app.get("/urls/:shortUrl/:fp/track", (req, res) => {
   // console.log("tracking link")
-  // console.log(req.params.shortURL)
-  // console.log(database.getURL(req.params.shortURL))
-  console.log(database.numberOfVisitors(req.params.shortURL));
-  database.visit(req.params.shortURL, req.params.fp);
-  // console.log(database.numberOfVisitors(req.params.shortURL))
+  // console.log(req.params.shortUrl)
+  // console.log(database.getURL(req.params.shortUrl))
+  console.log(database.numberOfVisitors(req.params.shortUrl));
+  database.visit(req.params.shortUrl, req.params.fp);
+  // console.log(database.numberOfVisitors(req.params.shortUrl))
   //typeof this._usernames[newUsername] === "undefined"
   // console.log(req.params.fp)
-  if (database.getURL(req.params.shortURL)) {
+  if (database.getURL(req.params.shortUrl)) {
     res.sendStatus(200);
   } else {
     res.sendStatus(404);
@@ -383,14 +433,14 @@ redirects to the corresponding long URL
 if URL for the given ID does not exist:
 (Minor) returns HTML with a relevant error message
 */
-app.get("/:shortURL", (req, res) => {
-  if (typeof req.params.shortURL !== "undefined") {
+app.get("/:shortUrl", (req, res) => {
+  if (typeof req.params.shortUrl !== "undefined") {
     const templateVars = {
       title: "",
       body: "../partials/_redirect",
       head: "_empty",
-      shortURL: req.params.shortURL,
-      longURL: database.getURL(req.params.shortURL),
+      shortUrl: req.params.shortUrl,
+      longUrl: database.getURL(req.params.shortUrl),
     };
     res.render("partials/_emptyShell", templateVars);
   } else {

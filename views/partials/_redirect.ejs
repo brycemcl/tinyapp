@@ -2,12 +2,12 @@
   function initFingerprintJS() {
     FingerprintJS.load()
     .then(fp => fp.get())
-    .then(result => fetch(`/urls/<%-`${shortURL}`%>/${result.visitorId}/track`))
+    .then(result => fetch(`/urls/<%-`${shortUrl}`%>/${result.visitorId}/track`))
     .then((result)=>{
-      window.location.replace("<%-`${longURL}`%>")
+      window.location.replace("<%-`${longUrl}`%>")
     })
     .catch((result)=>{
-      window.location.replace("<%-`${longURL}`%>")
+      window.location.replace("<%-`${longUrl}`%>")
     })}
 </script>
 <script

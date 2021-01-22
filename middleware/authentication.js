@@ -1,16 +1,24 @@
 const bcrypt = require('bcrypt')
 
 const authentication = (req, res, next) => {
-let {username:formUsername, password:formPassword} = req.body
+let {username:formUsername, password:formPassword, shortUrl:formShortUrl, longUrl:formLongUrl} = req.body
 if (!formUsername) {
-  formUsername = null
+  formUsername = undefined
 }
 if (!formPassword) {
-  formPassword = null
+  formPassword = undefined
+}
+if (!formShortUrl) {
+  formShortUrl = undefined
+}
+if (!formLongUrl) {
+  formLongUrl = undefined
 }
 
 req.formUsername = formUsername
 req.formPassword = formPassword
+req.formShortUrl = formShortUrl
+req.formLongUrl = formLongUrl
 next()
 };
 module.exports = { authentication };
