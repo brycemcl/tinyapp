@@ -16,7 +16,7 @@
     <% for(let url in urls) { %>
       <tr>
         <td><%= urls[url].dateCreated.toLocaleString('en-CA', { timeZone: 'America/Vancouver' }) %></td>
-        <td></td>
+        <td><%= Object.keys(urls[shortURL].views).length %></td>
         <td><a href="/<%= `${shortURL}` %>">
             <%= url %>
           </a></td>
@@ -35,9 +35,6 @@
       <% } %>
   </tbody>
 </table>
+<a href="data:text/json;charset=utf-8,<%= encodeURIComponent(JSON.stringify(Object.entries(urls[shortURL]).filter((item) => item[0] ==="views")[0][1])) %>" download="data.json">RAW JSON Visitor Data</a>
 </div>
 
-<% for(let url in urls) { %>
-  <tr>
-  </tr>
-<% } %>

@@ -258,11 +258,13 @@ app.get("/urls/:shortURL", authorization, (req, res) => {
   } else {
     const templateVars = {
       title: "",
-      body: "../pages/login",
+      body: "../pages/urlList",
       head: "_empty",
       errorType: "URL does not exist",
+      username: req.session.username,
+      urls: database.getUrls(req.session.username),
     };
-    res.render("partials/_shellLogin", templateVars);
+    res.render("partials/_shell", templateVars);
   }
 });
 
