@@ -11,7 +11,6 @@ const cookieSession = require("cookie-session");
 // const { request } = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080; // default port 8080
-const HOSTNAME = process.env.HOSTNAME || "localhost"; // default port 8080
 app.use(
   cookieSession({
     name: "session",
@@ -306,7 +305,22 @@ if user is not logged in:
 if user is logged it but does not own the URL for the given ID:
 (Minor) returns HTML with a relevant error message
 */
-app.post("/urls/:id/delete", (req, res) => {});
+app.post("/urls/:shortURL/delete",authorization, (req, res) => {
+  if(database.deleteUrl(req.params.shortURL, req.session.username)){
+    res.redirect(`/urls/`)
+  }else{
+    const templateVars = {
+      title: "",
+      body: "../pages/urlList",
+      head: "_empty",
+      errorType: "URL does not exist",
+      username: req.session.username,
+      urls: database.getUrls(req.session.username),
+    };
+    res.render("partials/_shell", templateVars);
+  }
+
+});
 
 /*
 GET /register

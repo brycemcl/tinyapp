@@ -77,7 +77,20 @@ const database = {
     if (typeof Object.keys(this["_urls"][url]["views"]) === undefined) {
       return 0;
     } else {
-    return Object.keys(this["_urls"][url]["views"]).length
+      return Object.keys(this["_urls"][url]["views"]).length;
+    }
+  },
+  deleteUrl(url, username) {
+    if (
+      typeof url !== "undefined" &&
+      typeof username !== "undefined" &&
+      typeof this["_usernames"][username]["urls"][url] !== "undefined"
+    ) {
+      delete this["_usernames"][username]["urls"][url];
+      delete this._urls[url];
+      return true
+    } else {
+      return false
     }
   },
 };
