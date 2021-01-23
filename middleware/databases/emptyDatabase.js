@@ -89,13 +89,15 @@ const database = {
     }
   },
   visit(url, fp) {
-    if (typeof url !== "undefined" && typeof fp !== "undefined" && url && fp) {
+    if (typeof url !== "undefined" && typeof fp !== "undefined" && url && fp && !this.validNewUrl(url)) {
       if (this["_urls"][url]["views"][fp]) {
         this["_urls"][url]["views"][fp].push(new Date());
       } else {
         this["_urls"][url]["views"][fp] = [new Date()];
       }
+      return true
     }
+    return false
   },
   numberOfVisitors(url) {
     if (typeof Object.keys(this["_urls"][url]["views"]) === undefined) {

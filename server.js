@@ -21,6 +21,18 @@ app.set("view engine", "ejs");
 app.use(authentication);
 app.use(dumpDatabase);
 
+
+/*
+Catchall for if a user types in a wrong route then gets routed to the tracking
+*/
+app.get("/undefined", (req, res) => {
+  if (req.session.username !== undefined) {
+    res.redirect(`/urls`);
+  } else {
+    res.redirect(`/login`);
+  }
+});
+
 /*
 GET /login
 
@@ -396,8 +408,7 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/urls/:shortUrl/:fp/track", (req, res) => {
-  database.visit(req.params.shortUrl, req.params.fp);
-  if (database.getURL(req.params.shortUrl)) {
+  if (database.visit(req.params.shortUrl, req.params.fp)) {
     res.sendStatus(200);
   } else {
     res.sendStatus(404);
