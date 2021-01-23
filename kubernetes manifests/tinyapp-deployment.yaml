@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tinyapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: tinyapp
+  template:
+    metadata:
+      labels:
+        service: tinyapp
+    spec:
+      containers:
+      - env:
+        - name: NODE_ENV
+          value: production
+        - name: PORT
+          value: "8080"
+        - name: SECRET
+          valueFrom:
+            configMapKeyRef:
+              key: SECRET
+              name: secret-env
+        image: brycemclachlan/tinyapp:lastest
+        imagePullPolicy: "Always"
+        name: tinyapp
+        ports:
+        - containerPort: 8080
+

@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: tinyapp
+resources:
+- secret-env-configmap.yaml
+- tinyapp-deployment.yaml
+- tinyapp-namespace.yaml
+- tinyapp-service.yaml
+- tinyapp-ingress.yaml
