@@ -8,10 +8,11 @@ const bodyParser = require("body-parser");
 const cookieSession = require("cookie-session");
 const app = express();
 const PORT = process.env.PORT || 8080; // default port 8080
+const SECRET = process.env.SECRET || uniqueURL(45)
 app.use(
   cookieSession({
     name: "session",
-    keys: [process.env.SECRET],
+    keys: [SECRET],
     maxAge: 24 * 60 * 60 * 1000 * 365, // year
   })
 );
