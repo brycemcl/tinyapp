@@ -5,7 +5,6 @@ const { dumpDatabase } = require("./middleware/dumpDatabase");
 const express = require("express");
 const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
 const app = express();
 const PORT = process.env.PORT || 8080; // default port 8080
@@ -16,7 +15,6 @@ app.use(
     maxAge: 24 * 60 * 60 * 1000 * 365, // year
   })
 );
-app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(authentication);
