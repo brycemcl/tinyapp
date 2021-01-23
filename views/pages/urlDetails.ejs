@@ -13,28 +13,24 @@
     </tr>
   </thead>
   <tbody>
-    <% for(let url in urls) { %>
       <tr>
-
-        <td><input disabled type="text" class="form-control text" placeholder="<%= urls[url].dateCreated.toLocaleString('en-CA', { timeZone: 'America/Vancouver' }) %>"></td>
+        <td><input disabled type="text" class="form-control text" placeholder="<%= urls[shortUrl].dateCreated.toLocaleString('en-CA', { timeZone: 'America/Vancouver' }) %>"></td>
         <td><input disabled type="text" class="form-control text" placeholder="<%= Object.keys(urls[shortUrl].views).length %>"></td>
         <td><a href="/<%= `${shortUrl}` %>">
-            <%= url %>
+            <%= shortUrl %>
           </a></td>
-        <td><a href="<%= urls[url].longUrl %>">
-            <%= urls[url].longUrl.split("://")[1] %>
+        <td><a href="<%= urls[shortUrl].longUrl %>">
+            <%= urls[shortUrl].longUrl.split("://")[1] %>
           </a></td>
         <td>
-          <form action="/urls/<%= url %>/edit" method="get" style="display: inline">
+          <form action="/urls/<%= shortUrl %>/edit" method="get" style="display: inline">
             <button type="submit" class="btn btn-primary">Edit</button>
           </form>
-          <form action="/urls/<%= `${url}/delete` %>" method="post" style="display: inline">
+          <form action="/urls/<%= `${shortUrl}/delete` %>" method="post" style="display: inline">
             <button type="submit" class="btn btn-danger">Delete</button>
           </form>
         </td>
-
       </tr>
-      <% } %>
   </tbody>
 </table>
 <a href="data:text/json;charset=utf-8,<%= encodeURIComponent(JSON.stringify(Object.entries(urls[shortUrl]).filter((item) => item[0] ==="views")[0][1])) %>" download="data.json">RAW JSON Visitor Data</a>
