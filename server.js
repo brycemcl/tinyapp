@@ -168,6 +168,7 @@ app.get("/", (req, res) => {
   }
 });
 
+
 /*
 GET /urls
 
@@ -448,6 +449,18 @@ app.get("/:shortUrl", (req, res) => {
     res.render("partials/_shellLogin", templateVars);
   }
 });
+
+/*
+Catchall for if a user types in a wrong route
+*/
+app.get("*", (req, res) => {
+  if (req.session.username !== undefined) {
+    res.redirect(`/urls`);
+  } else {
+    res.redirect(`/login`);
+  }
+});
+
 
 app.listen(PORT, () => {
   console.log(`TinyApp listening on port ${PORT}!`);
