@@ -1,6 +1,6 @@
-const {database} = require('./mockDatabase')
+const {database} = require('./databases/emptyDatabase');
 const authorization = (req, res, next) => {
-  if (req.session.username === undefined ) {
+  if (req.session.username === undefined) {
     const templateVars = {
       title: "",
       body: "../pages/login",
@@ -8,11 +8,11 @@ const authorization = (req, res, next) => {
       errorType: "Login required",
     };
     res.render("partials/_shell", templateVars);
-  } else if(database.validNewUsername(req.session.username)){
+  } else if (database.validNewUsername(req.session.username)) {
     res.redirect(`/logout`);
-    return
+    return;
   } else {
-    next()
+    next();
   }
 };
 module.exports = { authorization };

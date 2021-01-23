@@ -1,6 +1,7 @@
 const { authentication } = require("./middleware/authentication");
 const { authorization } = require("./middleware/authorization");
 const { database } = require("./middleware/mockDatabase");
+const { dumpDatabase } = require("./middleware/dumpDatabase");
 const express = require("express");
 const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(authentication);
+app.use(dumpDatabase);
 
 /*
 GET /login
@@ -394,14 +396,7 @@ app.get("/register", (req, res) => {
 });
 
 app.get("/urls/:shortUrl/:fp/track", (req, res) => {
-  // console.log("tracking link")
-  // console.log(req.params.shortUrl)
-  // console.log(database.getURL(req.params.shortUrl))
-  console.log(database.numberOfVisitors(req.params.shortUrl));
   database.visit(req.params.shortUrl, req.params.fp);
-  // console.log(database.numberOfVisitors(req.params.shortUrl))
-  //typeof this._usernames[newUsername] === "undefined"
-  // console.log(req.params.fp)
   if (database.getURL(req.params.shortUrl)) {
     res.sendStatus(200);
   } else {

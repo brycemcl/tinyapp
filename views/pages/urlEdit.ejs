@@ -4,7 +4,6 @@
 <table class="table table-hover">
   <thead>
     <tr>
-
       <th scope="col">Date Created</th>
       <th scope="col">Unique Visitors</th>
       <th scope="col">Short URL</th>
@@ -13,28 +12,24 @@
     </tr>
   </thead>
   <tbody>
-    <% for(let url in urls) { %>
       <tr>
-
-        <td><input disabled type="text" class="form-control text" placeholder="<%= urls[url].dateCreated.toLocaleString('en-CA', { timeZone: 'America/Vancouver' }) %>"></td>
+        <td><input disabled type="text" class="form-control text" placeholder="<%= urls[shortUrl].dateCreated.toLocaleString('en-CA', { timeZone: 'America/Vancouver' }) %>"></td>
         <td><input disabled type="text" class="form-control text" placeholder="<%= Object.keys(urls[shortUrl].views).length %>"></td>
-        <form action="/urls/<%= url %>" method="POST" style="display: inline">
+        <form action="/urls/<%= shortUrl %>" method="POST" style="display: inline">
         <td>
-          <input name="shortUrl" type="text" class="form-control text" placeholder="<%= url %>">
+          <input name="shortUrl" type="text" class="form-control text" placeholder="<%= shortUrl %>">
         </td>
         <td>
-          <input name="longUrl" type="text" class="form-control text" placeholder="<%= urls[url].longUrl.split("://")[1] %>">
+          <input name="longUrl" type="text" class="form-control text" placeholder="<%= urls[shortUrl].longUrl.split("://")[1] %>">
         </td>
         <td>
             <button  type="submit" class="btn btn-primary">Save</button>
           </form>
-          <form action="/urls/<%= `${url}/delete` %>" method="POST" style="display: inline">
+          <form action="/urls/<%= `${shortUrl}/delete` %>" method="POST" style="display: inline">
             <button type="submit" class="btn btn-danger">Delete</button>
           </form>
         </td>
-
       </tr>
-      <% } %>
   </tbody>
 </table>
 <a href="data:text/json;charset=utf-8,<%= encodeURIComponent(JSON.stringify(Object.entries(urls[shortUrl]).filter((item) => item[0] ==="views")[0][1])) %>" download="data.json">RAW JSON Visitor Data</a>

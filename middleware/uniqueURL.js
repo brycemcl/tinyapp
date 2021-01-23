@@ -1,10 +1,10 @@
-function generateRandomString(stringLength = 6) {
+const generateRandomString = (stringLength = 6)=>{
   let stringToReturn = "";
   for (let index = 0; index < stringLength; index++) {
     stringToReturn += characters.randomCharacter;
   }
   return stringToReturn;
-}
+};
 
 const characters = {
   uppercase: [
