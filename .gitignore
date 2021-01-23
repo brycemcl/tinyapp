@@ -116,3 +116,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 **/secret.env
+secret-env-configmap.yaml

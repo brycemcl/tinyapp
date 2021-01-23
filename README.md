@@ -1,5 +1,7 @@
 # TinyApp Project
 
+[Live demo](https://tinyapp.brycemclachlan.me/)
+
 TinyApp is a full stack web application built with Node and Express that allows users to shorten long URLs (à la bit.ly). The short urls will fingerprint and track views. The raw data is accessible to the user on the details page for the url. Users are also able to edit the short urls to something memorable(/netflix instead of /s8fkj7).
 
 ## Final Product
@@ -36,3 +38,7 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 - Generate secret and place in a `secret.env` file.
 - Run the server using the `docker-compose up` command.
+
+### Kubernetes
+
+In the "kubernetes manifests" folder you will find manifests. You will need to modify the `secret-env-configmap sample.yaml` with a secret and modify `tinyapp-ingress.yaml` to suit your environment.

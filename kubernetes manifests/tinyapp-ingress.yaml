@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: tinyapp
+  annotations:   
+    cert-manager.io/cluster-issuer: "letsencrypt-issuer"
+spec:
+  ingressClassName: "nginx" 
+  tls:
+  - hosts:
+    - tinyapp.brycemclachlan.me
+    secretName: tinyapp-tls
+  rules:
+  - host: tinyapp.brycemclachlan.me
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: tinyapp
+            port: 
+              number: 8080
+
+
