@@ -7,7 +7,7 @@ const authorization = (req, res, next) => {
       head: "_empty",
       errorType: "Login required",
     };
-    res.render("partials/_shell", templateVars);
+    res.render("partials/_shellLogin", templateVars);
   } else if (database.validNewUsername(req.session.username)) {
     res.redirect(`/logout`);
     return;
