@@ -23,6 +23,11 @@ app.use(dumpDatabase);
 
 
 /*
+serve icons
+*/
+app.use(express.static('public'))
+
+/*
 Catchall for if a user types in a wrong route then gets routed to the tracking
 */
 app.get("/undefined", (req, res) => {
