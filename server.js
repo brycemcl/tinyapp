@@ -460,6 +460,27 @@ app.get("/:shortUrl", (req, res) => {
   }
 });
 
+app.get("/u/:shortUrl", (req, res) => {
+  if (typeof req.params.shortUrl !== "undefined") {
+    const templateVars = {
+      title: "",
+      body: "../partials/_redirect",
+      head: "_empty",
+      shortUrl: req.params.shortUrl,
+      longUrl: database.getURL(req.params.shortUrl),
+    };
+    res.render("partials/_emptyShell", templateVars);
+  } else {
+    const templateVars = {
+      title: "",
+      body: "../pages/login",
+      head: "_empty",
+      errorType: "URL does not exist",
+    };
+    res.render("partials/_shellLogin", templateVars);
+  }
+});
+
 /*
 Catchall for if a user types in a wrong route
 */
